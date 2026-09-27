@@ -18,5 +18,5 @@ def extract_eigenvals(path):
             if len(parts) == 5:
                 e_up.append(float(parts[1]))
                 e_down.append(float(parts[2]))
-    return 
+    return np.array(e_up), np.array(e_down)
                             
