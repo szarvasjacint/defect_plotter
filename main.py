@@ -15,7 +15,6 @@ def main():
     parser_plot = subparsers.add_parser("plot", help="Energy level plotting")
     parser_plot.add_argument("--vbm", type=float, required=True, help="Energy of VBM (eV)")
 
-    # Ha nincs megadva parancs, kiírjuk a súgót
     if len(sys.argv) == 1:
         print("="*50)
         print("   VASP Defect Analyzer")
