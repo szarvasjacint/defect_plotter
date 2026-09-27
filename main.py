@@ -15,6 +15,7 @@ def main():
     # 2. Plotting
     parser_plot = subparsers.add_parser("plot", help="Energy level plotting")
     parser_plot.add_argument("--vbm", type=float, required=True, help="Energy of VBM (eV)")
+    parser_plot.add_argument("--cbm", type=float, required=True, help="Energy of CBM (eV)")
     parser_plot.add_argument("--EIGENVAL", required=True, help="EIGENVAL file path")
 
     if len(sys.argv) == 1:
@@ -33,7 +34,7 @@ def main():
         
     elif args.command == "plot":
         print(f"[PLOT] Starting plotting...")
-        plot_energy(args.EIGENVAL, args.vbm)
+        plot_energy(args.EIGENVAL, args.vbm, args.cbm)
 
 if __name__ == "__main__":
     main()

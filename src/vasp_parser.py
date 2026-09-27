@@ -12,11 +12,14 @@ def extract_tot_energy(path):
 def extract_eigenvals(path):
     e_up = []
     e_down = []
+    occ_up, occ_down = [], []
     with open(path, "r") as file:
         for line in file:
             parts = line.split()
             if len(parts) == 5 and parts[0].isdigit():
                 e_up.append(float(parts[1]))
                 e_down.append(float(parts[2]))
-    return np.array(e_up), np.array(e_down)
+                occ_up.append(float(parts[3]))
+                occ_down.append(float(parts[4]))
+    return np.array(e_up), np.array(e_down), np.array(occ_up), np.array(occ_down)
                             
