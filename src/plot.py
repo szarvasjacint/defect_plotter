@@ -39,8 +39,12 @@ def plot_energy(eigenval_path, vbm_energy, cbm_energy):
     
     #plt.legend(loc='upper right')
     plt.tight_layout()
-    output_filename = "defect_levels.pdf"
-    plt.savefig(output_filename, format="pdf", bbox_inches="tight")
-    print(f"[PLOT] PDF created: {output_filename}")
+    pdf_filename = "defect_levels.pdf"
+    png_filename = "defect_levels.png"
+    
+    plt.savefig(pdf_filename, format="pdf", bbox_inches="tight")
+    
+    plt.savefig(png_filename, format="png", dpi=300, bbox_inches="tight")
+    print(f"[PLOT] PDF and PNG created")
 
     plt.show()
