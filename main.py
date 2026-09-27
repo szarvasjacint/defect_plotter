@@ -1,6 +1,7 @@
 import argparse
 import sys
 from src.vasp_parser import extract_tot_energy
+from src.plot import plot_energy
 
 def main():
     parser = argparse.ArgumentParser(description="VASP Defect Energy Plotter")
@@ -14,6 +15,7 @@ def main():
     # 2. Plotting
     parser_plot = subparsers.add_parser("plot", help="Energy level plotting")
     parser_plot.add_argument("--vbm", type=float, required=True, help="Energy of VBM (eV)")
+    parser_plot.add_argument("--EIGENVAL", required=True, help="EIGENVAL file path")
 
     if len(sys.argv) == 1:
         print("="*50)
@@ -31,7 +33,7 @@ def main():
         
     elif args.command == "plot":
         print(f"[PLOT] Starting plotting...")
-        print(f"[PLOT] VBM set to: {args.vbm} eV\n")
+        plot_energy(args.vbm)
 
 if __name__ == "__main__":
     main()
