@@ -33,7 +33,7 @@ def main():
         
     elif args.command == "plot":
         print(f"[PLOT] Starting plotting...")
-        plot_energy(args.vbm)
+        plot_energy(args.EIGENVAL, args.vbm)
 
 if __name__ == "__main__":
     main()
