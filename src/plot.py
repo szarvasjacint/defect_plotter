@@ -1,4 +1,4 @@
-from src.vasp_parser import extract_eigenvals, extract_dos
+from src.vasp_parser import extract_eigenvals, extract_dos, extract_bandstructure
 import matplotlib.pyplot as plt
 import numpy as np
 def plot_energy(eigenval_path, vbm_energy, cbm_energy):
@@ -50,7 +50,6 @@ def plot_energy(eigenval_path, vbm_energy, cbm_energy):
     plt.show()
 
 
-# Fejléc cseréje:
 def plot_dos(dos_files, vbm_energy, bandgap, labels=None):
     print(f"[DOS] VBM set to: {vbm_energy} eV | Band gap: {bandgap} eV")
     
@@ -94,5 +93,42 @@ def plot_dos(dos_files, vbm_energy, bandgap, labels=None):
     plt.savefig(pdf_filename, format="pdf", bbox_inches="tight")
     plt.savefig(png_filename, format="png", dpi=300, bbox_inches="tight")
     
-    print(f"[DOS] Sikeresen elmentve: {pdf_filename} és {png_filename}")
+    print(f"[DOS] Saved files: {pdf_filename} and {png_filename}")
+    plt.show()
+
+
+def plot_bandstructure(band_file, klabels_file, vbm_energy):
+    print(f"[BAND] VBM set to: {vbm_energy} eV")
+    print(f"[BAND] Reading files: {band_file} and {klabels_file}")
+    
+    k_path, bands, k_coords, k_labels = extract_bandstructure(band_file, klabels_file)
+    
+    bands_shifted = bands - vbm_energy
+    
+    # MÓDOSÍTÁS: Szélesebb képarány (pl. 10x6 vagy 8x6)
+    plt.figure(figsize=(8, 6)) 
+    
+    for i in range(bands_shifted.shape[1]):
+        plt.plot(k_path, bands_shifted[:, i], color='#0026ca', linewidth=1.5, zorder=1)
+        
+    plt.axhline(0, color='black', linestyle='--', linewidth=1.5, zorder=2)
+    
+    for coord in k_coords:
+        plt.axvline(coord, color='black', linestyle='-', linewidth=0.8, alpha=0.5, zorder=0)
+        
+    plt.xticks(k_coords, k_labels, fontsize=14)
+    plt.xlim(k_coords[0], k_coords[-1])
+    
+    plt.ylim(-5, 5)
+    
+    plt.ylabel("Energy [eV]", fontsize=14)
+    
+    plt.tight_layout()
+    
+    pdf_filename = "bandstructure_plot.pdf"
+    png_filename = "bandstructure_plot.png"
+    plt.savefig(pdf_filename, format="pdf", bbox_inches="tight")
+    plt.savefig(png_filename, format="png", dpi=300, bbox_inches="tight")
+    
+    print(f"[BAND] Saved files: {pdf_filename} and {png_filename}")
     plt.show()

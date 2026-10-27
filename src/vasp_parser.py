@@ -72,3 +72,36 @@ def extract_dos(path):
             dos_down.append(dos_down_val)
 
     return np.array(energies), np.array(dos_up), np.array(dos_down)
+
+
+def extract_bandstructure(band_path, klabels_path):
+    #KLABELS
+    k_coords = []
+    k_labels = []
+    with open(klabels_path, "r") as f:
+        for line in f:
+            parts = line.strip().split()
+            if len(parts) == 2:
+                try:
+                    coord = float(parts[1])
+                    label = parts[0]
+                    if label == "GAMMA":
+                        label = r"$\Gamma$"
+                    k_labels.append(label)
+                    k_coords.append(coord)
+                except ValueError:
+                    continue
+                    
+    #REFORMATTED_BAND
+    k_path = []
+    bands = []
+    with open(band_path, "r") as f:
+        for line in f:
+            if line.startswith("#") or not line.strip():
+                continue
+            parts = line.split()
+            if len(parts) > 1:
+                k_path.append(float(parts[0]))
+                bands.append([float(x) for x in parts[1:]])
+                
+    return np.array(k_path), np.array(bands), k_coords, k_labels

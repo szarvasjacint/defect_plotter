@@ -1,7 +1,7 @@
 import argparse
 import sys
 from src.vasp_parser import extract_tot_energy
-from src.plot import plot_energy, plot_dos
+from src.plot import plot_energy, plot_dos, plot_bandstructure
 
 def main():
     parser = argparse.ArgumentParser(description="VASP Defect Energy Plotter")
@@ -25,6 +25,12 @@ def main():
     parser_dos.add_argument("--vbm", type=float, required=True, help="Energy of VBM (eV) for shifting")
     parser_dos.add_argument("--bandgap", type=float, required=True, help="Band gap energy in eV")
 
+    #4. BS
+    parser_band = subparsers.add_parser("band", help="Band structure plotting")
+    parser_band.add_argument("--band", required=True, help="REFORMATTED_BAND.dat file path")
+    parser_band.add_argument("--klabels", required=True, help="KLABELS file path")
+    parser_band.add_argument("--vbm", type=float, required=True, help="Energy of VBM (eV) for shifting")
+
     if len(sys.argv) == 1:
         print("="*50)
         print("   VASP Defect Analyzer")
@@ -46,6 +52,10 @@ def main():
     elif args.command == "dos":
         print(f"[DOS] Starting DOS plotting...")
         plot_dos(args.files, args.vbm, args.bandgap, args.labels)
+
+    elif args.command == "band":
+        print(f"[BAND] Starting band structure plotting...")
+        plot_bandstructure(args.band, args.klabels, args.vbm)
 
 if __name__ == "__main__":
     main()
