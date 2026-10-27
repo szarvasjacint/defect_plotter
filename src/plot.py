@@ -1,5 +1,6 @@
-from src.vasp_parser import extract_eigenvals
+from src.vasp_parser import extract_eigenvals, extract_dos
 import matplotlib.pyplot as plt
+import numpy as np
 def plot_energy(eigenval_path, vbm_energy, cbm_energy):
     print(f"VBM set to: {vbm_energy} eV")
     print(f"[PLOT] reading EIGENVAL: {eigenval_path}")
@@ -37,7 +38,6 @@ def plot_energy(eigenval_path, vbm_energy, cbm_energy):
     
     plt.ylim(-1, band_gap + 1) 
     
-    #plt.legend(loc='upper right')
     plt.tight_layout()
     pdf_filename = "defect_levels.pdf"
     png_filename = "defect_levels.png"
@@ -47,4 +47,52 @@ def plot_energy(eigenval_path, vbm_energy, cbm_energy):
     plt.savefig(png_filename, format="png", dpi=300, bbox_inches="tight")
     print(f"[PLOT] PDF and PNG created")
 
+    plt.show()
+
+
+# Fejléc cseréje:
+def plot_dos(dos_files, vbm_energy, bandgap, labels=None):
+    print(f"[DOS] VBM set to: {vbm_energy} eV | Band gap: {bandgap} eV")
+    
+    plt.figure(figsize=(10, 6))
+    colors = ['#7f7f7f', '#0026ca', '#d60000', '#2ca02c', '#9467bd']
+    
+    for i, file_path in enumerate(dos_files):
+        print(f"[DOS] reading file: {file_path}")
+        energies, dos_up, dos_down = extract_dos(file_path)
+        energies_shifted = energies - vbm_energy
+        
+        label = labels[i] if (labels and i < len(labels)) else file_path.split('/')[-1]
+        color = colors[i % len(colors)]
+        
+        plt.plot(energies_shifted, dos_up, color=color, linewidth=1.8, label=label)
+        if i == 0:
+            plt.fill_between(energies_shifted, 0, dos_up, color='#e5e5e5', alpha=0.7, zorder=1)
+            
+        if np.any(dos_down != 0):
+            plt.plot(energies_shifted, dos_down, color=color, linewidth=1.8)
+            if i == 0:
+                plt.fill_between(energies_shifted, 0, dos_down, color='#e5e5e5', alpha=0.7, zorder=1)
+                
+    plt.axvspan(0, bandgap, color='#e2f0d9', alpha=0.6, zorder=0, label='Band Gap')
+    
+    plt.axvline(0, color='black', linestyle='--', linewidth=1.0, zorder=2)
+    plt.axvline(bandgap, color='black', linestyle='--', linewidth=1.0, zorder=2)
+    
+    #plt.title("2D SiC - Density of States", fontsize=14, fontweight='normal', pad=12)
+    plt.xlabel("Energy [eV]", fontsize=12)
+    plt.ylabel("DOS", fontsize=12)
+    
+    plt.xlim(-4, 6)
+    plt.ylim(0, 4.0)
+    
+    plt.legend(loc='upper left', frameon=True, facecolor='white', edgecolor='none')
+    plt.tight_layout()
+    
+    pdf_filename = "pdos_plot.pdf"
+    png_filename = "pdos_plot.png"
+    plt.savefig(pdf_filename, format="pdf", bbox_inches="tight")
+    plt.savefig(png_filename, format="png", dpi=300, bbox_inches="tight")
+    
+    print(f"[DOS] Sikeresen elmentve: {pdf_filename} és {png_filename}")
     plt.show()

@@ -1,7 +1,7 @@
 import argparse
 import sys
 from src.vasp_parser import extract_tot_energy
-from src.plot import plot_energy
+from src.plot import plot_energy, plot_dos
 
 def main():
     parser = argparse.ArgumentParser(description="VASP Defect Energy Plotter")
@@ -17,6 +17,13 @@ def main():
     parser_plot.add_argument("--vbm", type=float, required=True, help="Energy of VBM (eV)")
     parser_plot.add_argument("--cbm", type=float, required=True, help="Energy of CBM (eV)")
     parser_plot.add_argument("--EIGENVAL", required=True, help="EIGENVAL file path")
+
+    #3. Dos plotting
+    parser_dos = subparsers.add_parser("dos", help="Density of States plotting")
+    parser_dos.add_argument("--files", nargs='+', required=True, help="List of DOSCAR or VASPKIT .dat files")
+    parser_dos.add_argument("--labels", nargs='+', help="Labels for the legend (e.g. Total Si C)")
+    parser_dos.add_argument("--vbm", type=float, required=True, help="Energy of VBM (eV) for shifting")
+    parser_dos.add_argument("--bandgap", type=float, required=True, help="Band gap energy in eV")
 
     if len(sys.argv) == 1:
         print("="*50)
@@ -35,6 +42,10 @@ def main():
     elif args.command == "plot":
         print(f"[PLOT] Starting plotting...")
         plot_energy(args.EIGENVAL, args.vbm, args.cbm)
+
+    elif args.command == "dos":
+        print(f"[DOS] Starting DOS plotting...")
+        plot_dos(args.files, args.vbm, args.bandgap, args.labels)
 
 if __name__ == "__main__":
     main()

@@ -27,34 +27,48 @@ def extract_dos(path):
     energies, dos_up, dos_down = [], [], []
 
     with open(path, "r") as file:
-        lines = file.readlines()
+        lines = [line.strip() for line in file if line.strip()]
 
     #VASPKIT
     if lines[0].startswith("#") or "Energy" in lines[0]:
         for line in lines:
             if line.startswith("#"):
                 continue
-            
             parts = line.split()
-            if len(parts) >= 2:
-                energies.append(float(parts[0]))
-                dos_up.append(float(parts[1]))
-                dos_down.append(0.0)
+            if len(parts) < 2:
+                continue
+            
+            try:
+                energy_val = float(parts[0])
+                dos_val = float(parts[-1])
+            except ValueError:
+                continue
+                
+            energies.append(energy_val)
+            dos_up.append(dos_val)
+            dos_down.append(0.0)
 
-    #original VASP
+    #VASP
     else:
         header_line = lines[5].split()
         nedos = int(header_line[2])
         
         for i in range(6, 6 + nedos):
+            if i >= len(lines):
+                break
             parts = lines[i].split()
-            energies.append(float(parts[0]))
+            if len(parts) < 3:
+                continue
             
-            if len(parts) == 5:
-                dos_up.append(float(parts[1]))
-                dos_down.append(float(parts[2]))
-            elif len(parts) == 3:
-                dos_up.append(float(parts[1]))
-                dos_down.append(0.0)
+            try:
+                energy_val = float(parts[0])
+                dos_up_val = float(parts[1])
+                dos_down_val = float(parts[2]) if len(parts) >= 5 else 0.0
+            except ValueError:
+                continue
+                
+            energies.append(energy_val)
+            dos_up.append(dos_up_val)
+            dos_down.append(dos_down_val)
 
     return np.array(energies), np.array(dos_up), np.array(dos_down)
